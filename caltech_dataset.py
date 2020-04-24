@@ -36,7 +36,7 @@ def make_dataset(directory, class_to_idx, split):
             continue
         for root, _, fnames in sorted(os.walk(target_dir, followlinks=True)):
             for fname in sorted(fnames):
-                name = target_dir + '/' + fname
+                name = target_class + '/' + fname
                 if name in split:
                     path = os.path.join(root, fname)
                     item = path, class_index
@@ -50,9 +50,16 @@ class Caltech(VisionDataset):
         self.split = split + '.txt' # This defines the split you are going to use
                                     # (split files are called 'train.txt' and 'test.txt')
         
-      
-        
-           
+        classes, class_to_idx = self._find_classes(self.root)
+        self.split = load_file(self.root, self.split)
+        samples = make_dataset(self.root, class_to_idx, self.split)
+        if len(samples) == 0:
+            raise (RuntimeError("Found 0 files in subfolders of: " + self.root))
+        self.samples = samples
+        self.classes = classes
+        self.class_to_idx = class_to_idx
+        self.targets = [s[1] for s in samples]
+         
         
         
         '''
