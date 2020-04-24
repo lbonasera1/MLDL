@@ -89,14 +89,17 @@ class Caltech(VisionDataset):
         Returns:
             tuple: (sample, target) where target is class_index of the target class.
         '''
-
-        image, label = ... # Provide a way to access image and label via index
+        path, label = self.samples[index]
+        image = self.pil_loader(path)
+                           # Provide a way to access image and label via index
                            # Image should be a PIL Image
                            # label can be int
 
         # Applies preprocessing when accessing the image
         if self.transform is not None:
             image = self.transform(image)
+        if self.target_transform is not None:
+            label = self.target_transform(label)
 
         return image, label
 
@@ -105,5 +108,5 @@ class Caltech(VisionDataset):
         The __len__ method returns the length of the dataset
         It is mandatory, as this is used by several other components
         '''
-        length = ... # Provide a way to get the length (number of elements) of the dataset
+        length = self.samples.__len__() # Provide a way to get the length (number of elements) of the dataset
         return length
