@@ -12,11 +12,23 @@ def pil_loader(path):
     with open(path, 'rb') as f:
         img = Image.open(f)
         return img.convert('RGB')
+ 
+def load_file(directory, split):
+    directory = os.path.expanduser(directory)
+    file_dir = os.path.join(directory, split)
+    file = open(file_dir, 'r')
+    samples_to_get = file.read().splitlines()
+    for f in samples_to_get:
+         if f.__contains__('BACKGROUND'):
+             samples_to_get.remove(f)
+    file.close()
+    return samples_to_get
 
 def make_dataset(directory, class_to_idx, split):
     instances = []
     directory = os.path.expanduser(directory)
-  
+    directory = os.path.join(directory, '101_ObjectCategories')
+    
     for target_class in sorted(class_to_idx.keys()):
         class_index = class_to_idx[target_class]
         target_dir = os.path.join(directory, target_class)
@@ -24,9 +36,11 @@ def make_dataset(directory, class_to_idx, split):
             continue
         for root, _, fnames in sorted(os.walk(target_dir, followlinks=True)):
             for fname in sorted(fnames):
-                path = os.path.join(root, fname)
-                item = path, class_index
-                instances.append(item)
+                name = target_dir + '/' + fname
+                if name in split:
+                    path = os.path.join(root, fname)
+                    item = path, class_index
+                    instances.append(item)
     return instances
 
 class Caltech(VisionDataset):
@@ -36,12 +50,8 @@ class Caltech(VisionDataset):
         self.split = split + '.txt' # This defines the split you are going to use
                                     # (split files are called 'train.txt' and 'test.txt')
         
-        directory = os.path.expanduser(root)
-        file_dir = os.path.join(directory, split)
-        file = open(file_dir, 'r')
-        self.samples_to_get = file.readlines()
-        for f in self.samples_to_get:
-            if (f.
+      
+        
            
         
         
