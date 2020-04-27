@@ -74,8 +74,7 @@ class Caltech(VisionDataset):
         
     def _find_classes(self, dir):
         
-        classes = [d.name for d in os.scandir(dir) if d.is_dir()]
-        classes.remove('BACKGROUND_Google')
+        classes = [d.name for d in os.scandir(dir) if d.is_dir() and 'BACKGROUND' not in d.name]
         classes.sort()
         class_to_idx = {classes[i]: i for i in range(len(classes))}
         return classes, class_to_idx
